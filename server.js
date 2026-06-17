@@ -4,30 +4,38 @@ const multer = require('multer');
 const path = require('path');
 const { Pool } = require('pg');
 const { v4: uuidv4 } = require('uuid');
-const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const pool = new Pool({
-  host: '/var/run/postgresql',
-  database: 'iron_forge_gymwear',
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+function publicIdFromUrl(url) {
+  const parts = url.split('/');
+  const uploadIndex = parts.findIndex(p => p === 'upload');
+  return parts.slice(uploadIndex + 2).join('/').replace(/\.[^.]+$/, '');
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = 'uploads/products';
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${uuidv4()}${ext}`);
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'products',
+    format: async () => 'webp',
+    public_id: () => uuidv4(),
   },
 });
 const upload = multer({
@@ -35,9 +43,8 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowed = /jpeg|jpg|png|gif|webp/;
-    const ext = allowed.test(path.extname(file.originalname).toLowerCase());
     const mime = allowed.test(file.mimetype);
-    cb(null, ext && mime);
+    cb(null, mime);
   },
 });
 
@@ -82,7 +89,7 @@ app.get('/api/products/:id', async (req, res) => {
 app.post('/api/products', upload.single('image'), async (req, res) => {
   try {
     const { name, description, price, category_id, stock_quantity } = req.body;
-    const image_url = req.file ? `/uploads/products/${req.file.filename}` : null;
+    const image_url = req.file ? req.file.path : null;
     const result = await pool.query(
       `INSERT INTO products (name, description, price, category_id, image_url, stock_quantity)
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
@@ -103,11 +110,8 @@ app.put('/api/products/:id', upload.single('image'), async (req, res) => {
 
     let image_url = product.rows[0].image_url;
     if (req.file) {
-      if (image_url) {
-        const oldPath = path.join(__dirname, image_url);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
-      image_url = `/uploads/products/${req.file.filename}`;
+      if (image_url) cloudinary.uploader.destroy(publicIdFromUrl(image_url));
+      image_url = req.file.path;
     }
 
     const result = await pool.query(
@@ -126,8 +130,7 @@ app.delete('/api/products/:id', async (req, res) => {
     const product = await pool.query('SELECT * FROM products WHERE id = $1', [req.params.id]);
     if (product.rows.length === 0) return res.status(404).json({ error: 'Product not found' });
     if (product.rows[0].image_url) {
-      const filePath = path.join(__dirname, product.rows[0].image_url);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      cloudinary.uploader.destroy(publicIdFromUrl(product.rows[0].image_url));
     }
     await pool.query('DELETE FROM products WHERE id = $1', [req.params.id]);
     res.json({ message: 'Product deleted' });
@@ -193,6 +196,10 @@ app.get('/api/orders', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Iron Forge Gymwear running at http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Iron Forge Gymwear running at http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
