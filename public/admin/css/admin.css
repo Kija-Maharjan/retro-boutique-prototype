@@ -597,6 +597,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   font-family: inherit;
 }
 
+.modal-box .form-group select option {
+  background: #2C221C;
+  color: #FDF8F4;
+}
+
 .modal-box .form-group input:focus,
 .modal-box .form-group textarea:focus,
 .modal-box .form-group select:focus {

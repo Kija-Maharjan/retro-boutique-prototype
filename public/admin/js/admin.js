@@ -355,6 +355,8 @@ function esc(s) {
 
 /* ─── Init Dashboard ─── */
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.location.pathname.includes('/admin/login.html')) return;
+
   if (!getToken()) {
     window.location.href = '/admin/login.html';
     return;
