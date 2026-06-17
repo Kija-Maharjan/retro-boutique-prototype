@@ -5,13 +5,13 @@
 }
 
 :root {
-  --primary: #A8926D;
-  --secondary: #8E724E;
-  --dark-accent: #645235;
-  --vintage-accent: #63604D;
-  --light-bg: #CAAF8A;
-  --text-dark: #1a1a1a;
-  --text-light: #f5f0eb;
+  --primary: #C4907A;
+  --secondary: #A8755E;
+  --dark-accent: #5C3D2E;
+  --vintage-accent: #8B5E4A;
+  --light-bg: #F5EDE3;
+  --text-dark: #2C1810;
+  --text-light: #FDF8F4;
   --white: #ffffff;
   --shadow: 0 2px 12px rgba(0,0,0,0.1);
   --radius: 8px;
@@ -27,7 +27,7 @@ body {
 }
 
 .navbar {
-  background: linear-gradient(135deg, var(--dark-accent), var(--vintage-accent));
+  background: linear-gradient(135deg, var(--dark-accent), var(--vintage-accent), var(--secondary));
   padding: 0 2rem;
   position: sticky;
   top: 0;
@@ -130,7 +130,7 @@ body {
   position: relative;
   height: 70vh;
   min-height: 400px;
-  background: linear-gradient(135deg, var(--dark-accent), var(--vintage-accent));
+  background: linear-gradient(135deg, var(--dark-accent), #8B5E4A, var(--vintage-accent));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -656,6 +656,28 @@ body {
 .checkout-modal h3 {
   color: var(--dark-accent);
   margin-bottom: 1.5rem;
+}
+
+.logo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  color: var(--text-light);
+  font-weight: 900;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  letter-spacing: 0;
+}
+
+.footer {
+  text-align: center;
+  padding: 2rem;
+  color: var(--secondary);
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(0,0,0,0.05);
 }
 
 @media (max-width: 768px) {

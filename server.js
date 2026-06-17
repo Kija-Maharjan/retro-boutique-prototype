@@ -198,7 +198,7 @@ app.get('/api/orders', async (req, res) => {
 
 if (require.main === module) {
   app.listen(PORT, () => {
-    console.log(`Iron Forge Gymwear running at http://localhost:${PORT}`);
+    console.log(`Retro Boutique running at http://localhost:${PORT}`);
   });
 }
 

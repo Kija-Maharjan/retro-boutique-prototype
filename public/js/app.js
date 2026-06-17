@@ -22,7 +22,7 @@ function saveCart() {
 }
 
 function formatPrice(n) {
-  return '$' + parseFloat(n).toFixed(2);
+  return 'Rs. ' + parseFloat(n).toFixed(2);
 }
 
 function fallbackImageUrl(name) {
