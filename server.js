@@ -27,7 +27,7 @@ function publicIdFromUrl(url) {
   return parts.slice(uploadIndex + 2).join('/').replace(/\.[^.]+$/, '');
 }
 
-app.use(express.json());
+app.use(express.json({ verify: (req, _, buf) => { req.rawBody = buf.toString(); } }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -212,13 +212,21 @@ function adminAuth(req, res, next) {
   }
 }
 
-app.post('/api/admin/login', (req, res) => {
-  const { username, password } = req.body;
-  if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { username, password } = req.body || {};
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password required' });
+    }
+    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    const token = jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
+    res.json({ token });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Login failed', detail: err.message });
   }
-  const token = jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
-  res.json({ token });
 });
 
 app.get('/api/admin/verify', adminAuth, (req, res) => {
