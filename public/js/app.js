@@ -138,16 +138,6 @@ document.addEventListener('click', (e) => {
     $('#cartOverlay').classList.add('active');
   }
 
-  if (e.target.closest('#adminClose') || e.target.closest('#adminOverlay')) {
-    $('#adminPanel').classList.remove('open');
-    $('#adminOverlay').classList.remove('active');
-  }
-
-  if (e.target.closest('#adminToggle')) {
-    $('#adminPanel').classList.toggle('open');
-    $('#adminOverlay').classList.toggle('active');
-  }
-
   if (e.target.closest('#checkoutCancel') || e.target.closest('#checkoutOverlay')) {
     $('#checkoutOverlay').classList.remove('active');
   }
@@ -211,7 +201,6 @@ $('#checkoutForm').addEventListener('submit', async (e) => {
     $('#checkoutOverlay').classList.remove('active');
     $('#checkoutForm').reset();
     alert('Order placed successfully!');
-    loadOrders();
   } catch (err) {
     alert('Failed to place order: ' + err.message);
   } finally {
@@ -220,82 +209,10 @@ $('#checkoutForm').addEventListener('submit', async (e) => {
   }
 });
 
-async function loadOrders() {
-  const container = $('#ordersList');
-  try {
-    const orders = await fetchAPI('/api/orders');
-    if (orders.length === 0) {
-      container.innerHTML = '<p style="color:#999;">No orders yet.</p>';
-      return;
-    }
-    container.innerHTML = orders.map(o => `
-      <div class="order-card">
-        <h5>${o.customer_name}</h5>
-        <p>${o.customer_email}</p>
-        <p style="font-size:0.8rem;color:#999;">${o.shipping_address}</p>
-        <div style="display:flex;justify-content:space-between;margin-top:0.5rem;">
-          <span class="status">${o.status}</span>
-          <strong>${formatPrice(o.total)}</strong>
-        </div>
-        <p style="font-size:0.75rem;color:#aaa;margin-top:0.25rem;">${new Date(o.created_at).toLocaleString()}</p>
-      </div>
-    `).join('');
-  } catch {
-    container.innerHTML = '<p style="color:#999;">Could not load orders.</p>';
-  }
-}
-
-$('#productForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const btn = e.target.querySelector('button[type="submit"]');
-  btn.disabled = true;
-  btn.textContent = 'Saving...';
-  try {
-    const id = $('#productId').value;
-    const fd = new FormData();
-    fd.append('name', $('#formName').value);
-    fd.append('description', $('#formDesc').value);
-    fd.append('price', $('#formPrice').value);
-    fd.append('category_id', $('#formCategory').value);
-    fd.append('stock_quantity', $('#formStock').value);
-    const fileInput = $('#formImage');
-    if (fileInput.files[0]) fd.append('image', fileInput.files[0]);
-
-    const url = id ? `/api/products/${id}` : '/api/products';
-    const method = id ? 'PUT' : 'POST';
-
-    await fetch(url, { method, body: fd });
-    $('#productForm').reset();
-    $('#productId').value = '';
-    $('#imagePreview').innerHTML = '';
-    loadProducts(state.activeCategory);
-    alert(id ? 'Product updated!' : 'Product created!');
-  } catch (err) {
-    alert('Failed to save: ' + err.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Save Product';
-  }
-});
-
-$('#formCancel').addEventListener('click', () => {
-  $('#productForm').reset();
-  $('#productId').value = '';
-  $('#imagePreview').innerHTML = '';
-});
-
-async function loadCategorySelect() {
-  const cats = await fetchAPI('/api/categories');
-  const sel = $('#formCategory');
-  sel.innerHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-}
-
 async function init() {
   await loadCategories();
   await loadProducts('all');
   renderCart();
-  await loadCategorySelect();
-  loadOrders();
 }
 
 init();

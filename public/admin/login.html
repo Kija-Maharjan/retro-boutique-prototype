@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Retro Boutique</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body class="admin-login-body">
+  <div class="admin-login-wrap">
+    <div class="admin-login-box">
+      <div class="admin-login-header">
+        <div class="login-logo">
+          <span class="logo-icon">RB</span>
+          <span>RETRO BOUTIQUE</span>
+        </div>
+        <p class="login-subtitle">Admin Access</p>
+      </div>
+
+      <div id="loginError" class="login-error hidden"></div>
+
+      <form id="loginForm" autocomplete="off" novalidate>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="loginUsername" placeholder="Enter username" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="loginPassword" placeholder="Enter password" required autocomplete="off">
+            <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
+              <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="login-btn" id="loginBtn">Sign In</button>
+      </form>
+
+      <div class="login-footer">
+        <a href="/">← Back to site</a>
+      </div>
+    </div>
+  </div>
+  <script src="/admin/js/admin.js"></script>
+  <script>initLoginPage()</script>
+</body>
+</html>

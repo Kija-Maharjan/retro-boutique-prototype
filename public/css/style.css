@@ -90,6 +90,10 @@ body {
   align-items: center;
 }
 
+a.admin-toggle {
+  text-decoration: none;
+}
+
 .admin-toggle,
 .cart-btn {
   background: var(--primary);

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Admin — Retro Boutique</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="admin-shell">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="admin-sidebar-header">
+        <a href="/admin/dashboard.html">
+          <span class="logo-icon">RB</span>
+          <span>RETRO BOUTIQUE</span>
+        </a>
+      </div>
+
+      <div class="sidebar-label">Menu</div>
+
+      <a href="/admin/dashboard.html" class="admin-nav-item active" data-page="dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        Dashboard
+      </a>
+
+      <button class="admin-nav-item" data-page="products" onclick="showPage('products')">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+        </svg>
+        Products
+      </button>
+
+      <button class="admin-nav-item" data-page="orders" onclick="showPage('orders')">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+        Orders
+      </button>
+
+      <button class="admin-nav-item" data-page="categories" onclick="showPage('categories')">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="18" cy="6" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 012 2v7M6 9v12"/>
+        </svg>
+        Categories
+      </button>
+
+      <div class="admin-sidebar-footer">
+        <button class="admin-logout-btn" id="logoutBtn">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div class="flex items-center gap-3" style="display:flex;align-items:center;gap:0.75rem">
+          <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="admin-topbar-right">
+          <span class="status-dot">Live</span>
+        </div>
+      </header>
+
+      <main class="admin-content" id="pageContent">
+        <!-- Dashboard content loaded by JS -->
+      </main>
+    </div>
+  </div>
+
+  <!-- Product Modal -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Product</h3>
+        <button class="modal-close" onclick="closeModal('productModal')">&times;</button>
+      </div>
+      <form id="productForm" enctype="multipart/form-data">
+        <input type="hidden" id="productId">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="formName" required>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="formDesc" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Price (Rs.)</label>
+          <input type="number" id="formPrice" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label>Stock Quantity</label>
+          <input type="number" id="formStock" value="0">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="formCategory"></select>
+        </div>
+        <div class="form-group">
+          <label>Image</label>
+          <input type="file" id="formImage" accept="image/*">
+          <div class="image-preview" id="imagePreview" style="margin-top:0.5rem"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary" id="saveProductBtn">Save</button>
+          <button type="button" class="btn-secondary" onclick="closeModal('productModal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Add Category</h3>
+        <button class="modal-close" onclick="closeModal('categoryModal')">&times;</button>
+      </div>
+      <form id="categoryForm">
+        <div class="form-group">
+          <label>Category Name</label>
+          <input type="text" id="categoryName" placeholder="e.g. Vintage" required>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary">Save</button>
+          <button type="button" class="btn-secondary" onclick="closeModal('categoryModal')">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/admin/js/admin.js"></script>
+</body>
+</html>

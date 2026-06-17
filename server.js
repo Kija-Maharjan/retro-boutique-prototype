@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const { Pool } = require('pg');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
@@ -193,6 +194,60 @@ app.get('/api/orders', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch orders' });
+  }
+});
+
+const JWT_SECRET = process.env.JWT_SECRET || uuidv4();
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+
+function adminAuth(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+}
+
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+  const token = jwt.sign({ role: 'admin' }, JWT_SECRET, { expiresIn: '7d' });
+  res.json({ token });
+});
+
+app.get('/api/admin/verify', adminAuth, (req, res) => {
+  res.json({ authenticated: true });
+});
+
+app.post('/api/admin/logout', (req, res) => {
+  res.json({ message: 'Logged out' });
+});
+
+app.post('/api/categories', adminAuth, async (req, res) => {
+  try {
+    const { name } = req.body;
+    const result = await pool.query(
+      'INSERT INTO categories (name) VALUES ($1) RETURNING *',
+      [name]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create category' });
+  }
+});
+
+app.delete('/api/categories/:id', adminAuth, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM categories WHERE id = $1', [req.params.id]);
+    res.json({ message: 'Category deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete category' });
   }
 });
 
