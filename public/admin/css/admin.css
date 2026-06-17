@@ -96,11 +96,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   align-items: center;
 }
 
-.password-wrap input { padding-right: 2.5rem; }
+.password-wrap input { padding-right: 3rem; }
 
 .password-toggle {
   position: absolute;
   right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
@@ -108,6 +110,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   padding: 4px;
   display: flex;
   transition: color 0.2s;
+  z-index: 1;
 }
 
 .password-toggle:hover { color: var(--admin-primary); }
@@ -127,17 +130,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .admin-login-box .form-group input {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid var(--admin-border);
+  background: #3A2C24;
+  border: 1px solid #5A4A3E;
   border-radius: 8px;
-  color: var(--admin-text);
-  font-size: 0.9rem;
+  color: #FDF8F4;
+  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .admin-login-box .form-group input:focus {
   border-color: var(--admin-primary);
+  box-shadow: 0 0 0 2px rgba(196,144,122,0.2);
+}
+
+.admin-login-box .form-group input::placeholder {
+  color: #7A6A5E;
 }
 
 .admin-login-box .form-group { margin-bottom: 1.25rem; }
@@ -579,13 +587,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .modal-box .form-group select {
   width: 100%;
   padding: 0.65rem 0.85rem;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid var(--admin-border);
+  background: #3A2C24;
+  border: 1px solid #5A4A3E;
   border-radius: 6px;
-  color: var(--admin-text);
+  color: #FDF8F4;
   font-size: 0.9rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   font-family: inherit;
 }
 
@@ -593,6 +601,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .modal-box .form-group textarea:focus,
 .modal-box .form-group select:focus {
   border-color: var(--admin-primary);
+  box-shadow: 0 0 0 2px rgba(196,144,122,0.2);
+}
+
+.modal-box .form-group input::placeholder {
+  color: #7A6A5E;
 }
 
 .modal-actions {
