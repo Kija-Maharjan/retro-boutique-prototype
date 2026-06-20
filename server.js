@@ -27,7 +27,7 @@ function publicIdFromUrl(url) {
   return parts.slice(uploadIndex + 2).join('/').replace(/\.[^.]+$/, '');
 }
 
-app.use(express.json({ verify: (req, _, buf) => { req.rawBody = buf.toString(); } }));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -197,9 +197,17 @@ app.get('/api/orders', async (req, res) => {
   }
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || uuidv4();
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('FATAL: JWT_SECRET must be set in environment');
+  process.exit(1);
+}
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+if (!ADMIN_USERNAME || !ADMIN_PASSWORD) {
+  console.error('FATAL: ADMIN_USERNAME and ADMIN_PASSWORD must be set in environment');
+  process.exit(1);
+}
 
 function adminAuth(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1];
